@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# postinstall -- runs as root at the end of the .pkg install.
+#
+# The payload has just placed "Claude Auto Start.app" in /Applications. The
+# app carries the shell scripts in its Resources, so everything below is done
+# with the copies inside the bundle.
+#
+# The launchd agent and the menu bar icon must belong to the person sitting at
+# the Mac, not to root, so hand over to their GUI session.
+
+set -uo pipefail
+
+APP="/Applications/Claude Auto Start.app"
+RES="$APP/Contents/Resources"
+LOG="/tmp/claude-auto-start-postinstall.log"
+
+: >"$LOG"
+
+# 1.0.0 kept the scripts here instead of in the app. Retire that copy, but
+# never one that holds settings the user wrote.
+OLD="/Library/Application Support/claude-auto-start"
+if [ -d "$OLD" ] && [ ! -e "$OLD/config.local.sh" ]; then
+	rm -rf "$OLD" && echo "removed superseded 1.0.0 files at $OLD" >>"$LOG"
+fi
+
+chmod 755 "$RES"/*.sh 2>/dev/null
+
+uid="$(stat -f %u /dev/console 2>/dev/null || echo 0)"
+user="$(stat -f %Su /dev/console 2>/dev/null || echo root)"
+
+if [ "$uid" -eq 0 ] || [ "$user" = "root" ]; then
+	{
+		echo "No logged-in console user found, so nothing was scheduled."
+		echo "Open \"Claude Auto Start\" from your Applications folder to finish."
+	} | tee -a "$LOG"
+	exit 0
+fi
+
+# `launchctl asuser` puts us inside the user's GUI session, which is the domain
+# install.sh registers the agent in and the only place a menu bar item exists.
+if launchctl asuser "$uid" sudo -u "$user" -H /bin/bash "$RES/install.sh" "${SCHEDULE_TIME:-07:00}" >>"$LOG" 2>&1; then
+	echo "scheduled the daily run for $user" >>"$LOG"
+else
+	echo "install.sh failed for $user; the app can schedule it from its menu" >>"$LOG"
+fi
+
+# Put the icon in the menu bar now, so the install visibly did something.
+launchctl asuser "$uid" sudo -u "$user" -H /usr/bin/open "$APP" >>"$LOG" 2>&1 \
+	|| echo "could not launch the app; open it from Applications" >>"$LOG"
+
+# The files are in place either way, so never fail the package.
+exit 0

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+    <title>Claude Auto Start</title>
+    <organization>com.ominext</organization>
+    <domains enable_localSystem="true"/>
+    <options customize="never" require-scripts="true" rootVolumeOnly="true" hostArchitectures="arm64,x86_64"/>
+    <welcome    file="welcome.txt"    mime-type="text/plain"/>
+    <conclusion file="conclusion.txt" mime-type="text/plain"/>
+    <choices-outline>
+        <line choice="default">
+            <line choice="com.ominext.claude-auto-start"/>
+        </line>
+    </choices-outline>
+    <choice id="default"/>
+    <choice id="com.ominext.claude-auto-start" visible="false">
+        <pkg-ref id="com.ominext.claude-auto-start"/>
+    </choice>
+    <pkg-ref id="com.ominext.claude-auto-start" version="__VERSION__" onConclusion="none">ClaudeAutoStart-component.pkg</pkg-ref>
+</installer-gui-script>

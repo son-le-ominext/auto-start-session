@@ -1,0 +1,15 @@
+Claude Auto Start is installed and scheduled for 07:00 every day.
+
+Check it any time:
+    "/Library/Application Support/claude-auto-start/status.sh"
+
+Fire it right now to test:
+    launchctl kickstart -k gui/$(id -u)/com.ominext.claude-auto-start
+
+Change the time (for example 06:30):
+    "/Library/Application Support/claude-auto-start/install.sh" 06:30
+
+Uninstall:
+    "/Library/Application Support/claude-auto-start/uninstall.sh"
+
+If Claude Code ever logs you out, the morning run fails until you run `claude auth login` again. The log is at ~/Library/Logs/claude-auto-start/session.log.

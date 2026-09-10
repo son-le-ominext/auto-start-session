@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.ominext.claude-auto-start</string>
+
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>__SCRIPT_PATH__</string>
+	</array>
+
+	<!-- Fires at 07:00 local time every day. If the Mac is asleep or off at
+	     07:00, launchd runs the job as soon as it wakes or logs back in. -->
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>__HOUR__</integer>
+		<key>Minute</key>
+		<integer>__MINUTE__</integer>
+	</dict>
+
+	<key>RunAtLoad</key>
+	<false/>
+
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+	</dict>
+
+	<!-- Only run inside a logged-in GUI session, so the login keychain holding
+	     the Claude Code credentials is unlocked and readable. -->
+	<key>LimitLoadToSessionType</key>
+	<string>Aqua</string>
+
+	<key>ProcessType</key>
+	<string>Background</string>
+
+	<key>StandardOutPath</key>
+	<string>__LOG_DIR__/launchd.out.log</string>
+	<key>StandardErrorPath</key>
+	<string>__LOG_DIR__/launchd.err.log</string>
+</dict>
+</plist>

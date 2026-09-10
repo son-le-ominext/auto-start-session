@@ -1,0 +1,9 @@
+Claude Auto Start opens a Claude Code session automatically at 07:00 every day, so your session and its usage window are already live at the start of the workday.
+
+This installer will:
+
+  - copy the scripts to /Library/Application Support/claude-auto-start
+  - register a launchd agent for your user account (no password is stored)
+  - schedule the first run for 07:00 tomorrow
+
+Requirements: Claude Code installed (the `claude` command) and logged in. If the Mac is asleep at 07:00, the job runs as soon as it wakes.

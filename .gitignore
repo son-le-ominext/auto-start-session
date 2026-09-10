@@ -1,0 +1,13 @@
+# Built installers and the app bundle. Rebuild with packaging/build.sh.
+dist/
+
+# Icon proof sheets and the compiled generator. Rebuild with
+# packaging/icon/build-icons.sh. The .icns and .ico files it produces are
+# committed on purpose, so an ordinary build needs no Swift toolchain.
+packaging/icon/build/
+
+# Personal settings. Never commit these; see the config.example files.
+mac/config.local.sh
+windows/config.local.ps1
+
+.DS_Store
